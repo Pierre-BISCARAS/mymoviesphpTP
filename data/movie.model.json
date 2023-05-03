@@ -1,0 +1,29 @@
+let mymoviestdschema =
+{
+   $jsonSchema: {
+        required: [	"_id",		"title",	"year"	 ],
+        properties: {
+            title: {
+                bsonType: "string"
+            },
+            year: {
+                bsonType: "int",
+                minimum: 1900,
+                maximum: 2030
+            },
+     		actors: {
+        	   bsonType: [ "array" ],
+          	   items: [
+       	   	{  type: "string"   },
+        	   	{  type: "string"   },
+    	         	{  type: "string"   },
+       	  ]
+        	},
+     		production: {
+        	   bsonType: [ "array" ],
+          	   items: [
+       	   	{  type: "string"   },       	  ]
+        	},
+        }
+    }
+}
