@@ -19,16 +19,51 @@ $search_title = GETPOST('search_title');
      * envoyé à votre base MongoDB
      * */
     
-// foreach ($cols as $key => $dtls) {
-//     $searchKey = 'search_' . $key;
-//     $value = isset($GETPOST[$searchKey]) ? $GETPOST[$searchKey] : '';
-//     if (!empty($value)) {
-//         $arr_search[$key] = $value;
-//     }
-// }
+$search_title = GETPOST('search_title');
+if ($search_title)
+    $arr_search['title'] = array(
+        '$regex' => $search_title, 
+        '$options' => 'i'
+    );
 
+$search_year = GETPOST('search_year');
+if ($search_year)
+    $arr_search['year'] = array(
+        '$in' => $search_year(
+            ($search_title),
+            (int)($search_year)
+        )
+    );
 
+$search_production = GETPOST('seach_production');
+if ($search_production)
+    $arr_search['production'] = array(
+        '$regex' => $search_production, 
+        '$options' => 'i'
+    );
 
+$search_actors = GETPOST('search_actors');
+if ($search_actors)
+    $arr_search['actors'] = array(
+        '$regex' => $search_actors, 
+        '$options' => 'i'
+    );
+
+$search_synopsis = GETPOST('search_synopsis');
+if ($search_synopsis)
+    $arr_search['synopsis'] = array(
+        '$regex' => $search_production, 
+        '$options' => 'i'
+    );
+
+$search_id_tmdb = GETPOST('search_id_tmdb');
+if ($search_id_tmdb)
+    $search_id_tmdb['id_tmdb'] = array(
+        '$in' => $search_id_tmdb(
+            ($search_id_tmdb),
+            (int)($search_id_tmdb)
+        )
+    );
 
 $mdb = new myDbClass();
 

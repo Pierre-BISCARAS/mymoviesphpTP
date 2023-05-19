@@ -52,8 +52,8 @@ if ($id == '') {
         $title = GETPOST('title');
         $year = GETPOST('year');
         $realisateurs = GETPOST('realisateurs');
-        $producteurs = GETPOST('producteurs');
-        $acteurs_principaux = GETPOST('acteurs_principaux');
+        $production = GETPOST('production');
+        $actors = GETPOST('actors');
         $synopsis = GETPOST('synopsis');
         
         try {
@@ -63,10 +63,9 @@ if ($id == '') {
                     'title' => $title,
                     'year' => $year,
                     'production' => [
-                        'realisateurs' => $realisateurs,
-                        'producteurs' => $producteurs
+                        'production' => $production
                     ],
-                    'actors' => $acteurs_principaux,
+                    'actors' => $actors,
                     'synopsis' => $synopsis
                 ]]
             );
