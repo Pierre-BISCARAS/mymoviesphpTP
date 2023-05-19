@@ -58,6 +58,7 @@ function merge_dtls($doc, $dtls, $cast)
         $final_prods[] = $list_prod[$i]['name'];
     }
     $doc['production'] = implode(PHP_EOL, $final_prods);
+    $doc['_id'] = isset($doc['_id']) ? (string)$doc['_id'] : '';
 
     $list_cast = $cast['cast'];
     $nb_prod = sizeof($list_cast);

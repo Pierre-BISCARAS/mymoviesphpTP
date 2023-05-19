@@ -6,6 +6,10 @@ $page = GETPOST('num_page') ? GETPOST('num_page') : 1;
 $pagination = 25;
 $params = '';
 $arr_search = array();
+$search_title = GETPOST('search_title');
+
+
+
 
 
     /**
@@ -15,6 +19,14 @@ $arr_search = array();
      * envoyé à votre base MongoDB
      * */
     
+// foreach ($cols as $key => $dtls) {
+//     $searchKey = 'search_' . $key;
+//     $value = isset($GETPOST[$searchKey]) ? $GETPOST[$searchKey] : '';
+//     if (!empty($value)) {
+//         $arr_search[$key] = $value;
+//     }
+// }
+
 
 
 
@@ -34,6 +46,32 @@ $movies_collection = $mdb->getCollection('movies');
 // print '<pre>';
 // print_r($arr_search);
 // print '</pre>';
+
+$action = isset($GETPOST['action']) ? $GETPOST['action'] : '';
+$id = isset($GETPOST['id']) ? $GETPOST['id'] : '';
+
+
+if ($GETPOST['action'] === 'delete' && isset($GETPOST['id'])) {
+    $documentId = $GETPOST['id'];
+
+    // Vérifier si l'ID est valide
+    if (MongoDB\BSON\ObjectId::isValid($documentId)) {
+        // Supprimer le document de la collection "movies" en utilisant son ID
+        $result = $movies_collection->deleteOne(['_id' => new MongoDB\BSON\ObjectId($documentId)]);
+
+        // Vérifier si la suppression a réussi
+        if ($result->getDeletedCount() > 0) {
+            echo 'Le document a été supprimé avec succès.';
+        } else {
+            echo 'Impossible de trouver le document spécifié ou une erreur s\'est produite lors de la suppression.';
+        }
+    } else {
+        echo 'ID invalide.';
+    }
+}
+
+
+
 $nb_elts = $movies_collection->countDocuments($arr_search);
 $nb_pages = ceil($nb_elts / $pagination);
 $cursor = $movies_collection->find(

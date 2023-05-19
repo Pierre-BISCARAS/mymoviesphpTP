@@ -44,7 +44,9 @@ $cols = array(
     'actors' => array('lbl' => 'Acteurs', 'type' => 'array'),
     'synopsis' => array('lbl' => 'Synopsis', 'type' => 'textarea'),
     'id_tmdb' => array('lbl' => 'TMDB', 'type' => 'text'),
+    'actions' => array('lbl' => 'Actions', 'type' => 'actions'),
 );
+    
 // print '<pre>';
 // print_r($results);
 // print '</pre>';
@@ -120,12 +122,14 @@ $cols = array(
             $dtls_film = $tmdb->getMovie($current_res['id']);
             $cast_film = $tmdb->getMovieCast($current_res['id']);
             $document = merge_dtls($document, $dtls_film, $cast_film);
+            
             // if ($current_res['id'] == 1593) {
             //     print '<pre>';
             //     print_r($cast_film);
             //     print '</pre>';
             // }
-
+            var_dump($current_res['id']);
+            var_dump($document['id_tmdb']);
             if ($import == 'confirm') {
                 if ($current_res['id'] != $document['id_tmdb'] || $forceUpdate) {
                     /**
@@ -135,9 +139,39 @@ $cols = array(
                      * Si nous sommes sur un enregistrement déjà existant alors on fait une mise à jour,
                      * Sinon, c'est un nouvel enregistrement, alors on fait une création
                      * */
+                    $existingMovie = $movies_collection->findOne(['id_tmdb' => $current_res['id']]);
+                    
+                    if ($existingMovie) {
+                        $updatedDocument = merge_dtls($existingMovie, $dtls_film, $cast_film);
+                        $movies_collection->updateOne(['_id' => $existingMovie['_id']], ['$set' => $updatedDocument]);
+                    } else {
+                        $newDocument = merge_dtls([], $dtls_film, $cast_film);
+                        $movies_collection->insertOne($newDocument);
+                    }
                 }
             }
-            print_tr_movie($document, $cols);
+            echo '<tr>';
+            foreach ($cols as $key => $dtls) {
+                echo '<td>';
+                if ($key == 'actions') {
+                    echo '<form action="tmdb.php?action=tmdb" method="post">';
+                    echo '<input type="hidden" name="import" value="confirm">';
+                    echo '<input type="hidden" name="forceUpdate" value="1">';
+                    echo '<input type="hidden" name="num_page" value="' . $page . '">';
+                    echo '<input type="hidden" name="with_people" value="' . $with_people . '">';
+                    echo '<input type="hidden" name="id_tmdb" value="' . $document['id_tmdb'] . '">';
+                    echo '<button type="submit">Ajouter</button>';
+                    echo '</form>';
+                } else {
+                    echo $document[$key];
+                }
+                echo '</td>';
+            }
+            echo '</tr>';
+        
+            unset($document);
+
+
             unset($document);
         }
 
