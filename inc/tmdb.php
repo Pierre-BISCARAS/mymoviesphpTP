@@ -54,10 +54,10 @@ $cols = array(
 <form action="index.php?action=tmdb" method="post">
         <label for="with_people">ID TMDB à rechercher</label>
         <input type="text" name="id_tmdb" value="<?php echo $with_people; ?>" />
-        <button type="submit">Ajouter</button>
-    </form>
+</form>
 </div>
 <div class="dtitle w3-half w3-left">Liste des elements</div>
+<a href="index.php?action=tmdb&import=confirm&forceUpdate=1" class="w3-button w3-blue w3-right">Importer</a>
 <div class="dmorehtmlright w3-third w3-right">
     
     <?php
@@ -132,36 +132,18 @@ $cols = array(
 
             if ($import == 'confirm') {
                 if ($current_res['id'] != $document['id_tmdb'] || $forceUpdate) {
-                    /**
-                     *  A implémenter : 
-                     * Récupérer les données transmises par le formulaire
-                     * Les envoyer pour mettre à jour l'enregistrement correspondant dans votre base MongoDB
-                     * Si nous sommes sur un enregistrement déjà existant alors on fait une mise à jour,
-                     * Sinon, c'est un nouvel enregistrement, alors on fait une création
-                     * */
-                    $submittedTmdbId = $GETPOST['id_tmdb'];
-
-                    // Vérifiez si le film existe déjà dans la base de données
-                    $existingMovie = $movies_collection->findOne(['id_tmdb' => $submittedTmdbId]);
-                
-                    if ($existingMovie) {
-                        $updateResult = $movies_collection->updateOne(
-                            ['id_tmdb' => $submittedTmdbId],
-                            ['$set' => ['title' => $title, 'year' => $year, 'synopsis' => $synopsis]]
-                        );
-                    } else {
-                        $newMovie = [
-                            'id_tmdb' => $submittedTmdbId,
-                            'title' => $title,
-                            'year' => $year,
-                            'production' => $production,
-                            'actors' => $actors,
-                            'synopsis' => $synopsis
-                        ];
-                        $insertResult = $movies_collection->insertOne($newMovie);
-                    }
+                    // Convertir l'ID MongoDB en ObjectId
+                    $mongoId = new ObjectId($document['_id']);
+            
+                    // Mise à jour si le document existe déjà, sinon insérer le nouveau document
+                    $movies_collection->updateOne(
+                        ['_id' => $mongoId], 
+                        ['$set' => $document], 
+                        ['upsert' => true]
+                    );
                 }
             }
+
             print_tr_movie($document, $cols);
             unset($document);
         }

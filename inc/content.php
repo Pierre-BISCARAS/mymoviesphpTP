@@ -5,6 +5,8 @@ $action = GETPOST('action');
 switch ($action) {
     case '':
     case 'delete':
+        include(dirname(__FILE__) . '/delete.php');
+        break;
     case 'list':
         include(dirname(__FILE__) . '/list.php');
         break;

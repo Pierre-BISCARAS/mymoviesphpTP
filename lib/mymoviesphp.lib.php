@@ -27,7 +27,10 @@ function print_tr_movie($document, $cols)
         <td>
             <?php
             if ($dtls['type'] == 'id') {
-                echo '<a href="index.php?action=edit&id=' . $elt[$key] . '">';
+                echo '<a href="index.php?action=delete&id=' . ($elt[$key] ?? '') . '">';
+                echo '<i class="fas fa-trash w3-hover-opacity" aria-hidden="true"></i>';
+                echo '</a>';
+                echo '<a href="index.php?action=edit&id=' . ($elt[$key] ?? '') . '">';
                 echo '<i class="fas fa-edit w3-hover-opacity" aria-hidden="true"></i>';
                 echo '</a>';
             } elseif ($dtls['type'] == 'textarea') {
@@ -40,13 +43,13 @@ function print_tr_movie($document, $cols)
             ?>
         </td>
 <?php
-    }
-    print '<td>';
-    echo '<a href="index.php?action=delete&id=' . $elt[$key] . '">';
-    echo '<i class="fas fa-trash w3-hover-opacity" aria-hidden="true"></i>';
-    echo '</a>';
-    print '</td>';
-    print '</tr>';
+}
+//     print '<td>';
+//     echo '<a href="index.php?action=delete&id=' . $elt[$key] . '">';
+//     echo '<i class="fas fa-trash w3-hover-opacity" aria-hidden="true"></i>';
+//     echo '</a>';
+//     print '</td>';
+//     print '</tr>';
 }
 
 function merge_dtls($doc, $dtls, $cast)
