@@ -5,9 +5,9 @@ use MongoDB\BSON\ObjectId;
 $mdb = new myDbClass();
 $client = $mdb->getClient();
 $movies_collection = $mdb->getCollection('movies');
-$id = GETPOST('id');
+$id = $_GET['id'] ?? '';
 
-if ($id == '') {
+if ($id === '') {
 ?>
     <div class="dtitle w3-container w3-teal">
         <h2>Erreur</h2>
@@ -16,12 +16,9 @@ if ($id == '') {
 } else {
     $obj_id = new MongoDB\BSON\ObjectId($id);
 
-    
-    $FilmSupp = $movies_collection->deleteOne(
-        ['_id' => $obj_id]
-    );
+    $deleteResult = $movies_collection->deleteOne(['_id' => $obj_id]);
 
-    if ($FilmSupp->getDeletedCount() == 1) {
+    if ($deleteResult->getDeletedCount() === 1) {
         header('Location: index.php?action=list');
     } else {
         ?>

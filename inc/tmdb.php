@@ -132,15 +132,21 @@ $cols = array(
 
             if ($import == 'confirm') {
                 if ($current_res['id'] != $document['id_tmdb'] || $forceUpdate) {
-                    // Convertir l'ID MongoDB en ObjectId
                     $mongoId = new ObjectId($document['_id']);
-            
-                    // Mise à jour si le document existe déjà, sinon insérer le nouveau document
-                    $movies_collection->updateOne(
-                        ['_id' => $mongoId], 
-                        ['$set' => $document], 
+
+                    $updateResult = $movies_collection->updateOne(
+                        ['_id' => $mongoId],
+                        ['$set' => $document],
                         ['upsert' => true]
                     );
+            
+                    if ($updateResult->getMatchedCount() > 0 || $updateResult->getUpsertedCount() > 0) {
+                        // Document updated or inserted successfully
+                        echo "Document updated or inserted successfully.";
+                    } else {
+                        // Failed to update or insert the document
+                        echo "Failed to update or insert the document.";
+                    }
                 }
             }
 
